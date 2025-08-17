@@ -1,24 +1,52 @@
 import { useState } from 'react';
 import Map from '@/components/Map';
+import { MapErrorBoundary } from '@/components/MapErrorBoundary';
 import { PropertyCard } from '@/components/PropertyCard';
-import { mockProperties } from '@/data/properties';
+import { useProperties } from '@/services/api';
 import { Property } from '@/types/property';
 import { Card } from '@/components/ui/card';
+import { PropertyListSkeleton } from '@/components/ui/loading-skeleton';
+import { ErrorMessage } from '@/components/ui/error-message';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function MapView() {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const { data: properties = [], isLoading, isError, error, refetch } = useProperties();
 
+  if (isLoading) {
+    return (
+      <div className="h-screen flex">
+        <div className="flex-1 bg-neutral-200 animate-pulse" />
+        <div className="w-96 bg-background border-l p-4">
+          <PropertyListSkeleton count={3} />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <ErrorMessage
+          title="Failed to load map data"
+          message={error?.message || "Unable to load property locations."}
+          onRetry={() => refetch()}
+        />
+      </div>
+    );
+  }
   return (
     <div className="h-screen flex">
       {/* Map Section */}
       <div className="flex-1 relative">
-        <Map
-          properties={mockProperties}
-          selectedProperty={selectedProperty}
-          onPropertySelect={setSelectedProperty}
-        />
+        <MapErrorBoundary>
+          <Map
+            properties={properties}
+            selectedProperty={selectedProperty}
+            onPropertySelect={setSelectedProperty}
+          />
+        </MapErrorBoundary>
       </div>
 
       {/* Property Details Sidebar */}
@@ -45,10 +73,10 @@ export default function MapView() {
         <div className="w-96 bg-background border-l overflow-y-auto">
           <div className="p-4 border-b">
             <h2 className="text-lg font-semibold text-luxury">All Properties</h2>
-            <p className="text-sm text-neutral-600">{mockProperties.length} properties available</p>
+            <p className="text-sm text-neutral-600">{properties.length} properties available</p>
           </div>
           <div className="p-4 space-y-4">
-            {mockProperties.map((property) => (
+            {properties.map((property) => (
               <Card 
                 key={property.id} 
                 className="p-4 cursor-pointer hover:shadow-card transition-shadow"

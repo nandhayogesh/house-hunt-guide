@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PropertyCard } from '@/components/PropertyCard';
-import { mockProperties } from '@/data/properties';
+import { useFeaturedProperties } from '@/services/api';
 import { Card } from '@/components/ui/card';
+import { PropertyListSkeleton } from '@/components/ui/loading-skeleton';
+import { ErrorMessage } from '@/components/ui/error-message';
 import { Search, MapPin, Eye, Users, Award, TrendingUp } from 'lucide-react';
 import heroImage from '@/assets/hero-property.jpg';
 
 export default function Index() {
-  const featuredProperties = mockProperties.filter(property => property.featured);
+  const { data: featuredProperties = [], isLoading, isError, error, refetch } = useFeaturedProperties();
 
   return (
     <div className="min-h-screen">
@@ -86,11 +88,21 @@ export default function Index() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} variant="featured" />
-            ))}
-          </div>
+          {isLoading ? (
+            <PropertyListSkeleton count={3} />
+          ) : isError ? (
+            <ErrorMessage
+              title="Failed to load featured properties"
+              message={error?.message || "Unable to fetch featured properties."}
+              onRetry={() => refetch()}
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+              {featuredProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} variant="featured" />
+              ))}
+            </div>
+          )}
           
           <div className="text-center">
             <Link to="/properties">

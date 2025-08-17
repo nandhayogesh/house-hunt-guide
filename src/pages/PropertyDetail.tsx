@@ -1,9 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockProperties } from '@/data/properties';
+import { useProperty } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { PropertyCardSkeleton } from '@/components/ui/loading-skeleton';
+import { ErrorMessage } from '@/components/ui/error-message';
 import { 
   ArrowLeft, 
   Bed, 
@@ -23,15 +25,34 @@ export default function PropertyDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  const property = mockProperties.find(p => p.id === id);
+  const { data: property, isLoading, isError, error, refetch } = useProperty(id!);
 
-  if (!property) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <div className="container mx-auto px-4 py-8">
+          <Button 
+            variant="outline" 
+            className="mb-6"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Properties
+          </Button>
+          <PropertyCardSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !property) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-luxury mb-4">Property Not Found</h1>
-          <Button onClick={() => navigate('/')}>Return Home</Button>
-        </div>
+        <ErrorMessage
+          title="Property Not Found"
+          message={error?.message || "The property you're looking for doesn't exist or has been removed."}
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }

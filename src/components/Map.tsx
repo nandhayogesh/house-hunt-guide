@@ -17,8 +17,15 @@ const Map: React.FC<MapProps> = ({ properties, selectedProperty, onPropertySelec
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    // Initialize map
-    mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZS1kZW1vIiwiYSI6ImNrZjZhMDVmMzBjdm8ycW1waHNyYXpudG8ifQ.example'; // Placeholder token
+    // Initialize map with environment variable
+    const mapboxToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+    
+    if (!mapboxToken) {
+      console.error('Mapbox access token is not configured. Please set VITE_MAPBOX_ACCESS_TOKEN in your environment variables.');
+      return;
+    }
+    
+    mapboxgl.accessToken = mapboxToken;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,

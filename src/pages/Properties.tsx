@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
 import { SearchFilters } from '@/components/SearchFilters';
 import { PropertyCard } from '@/components/PropertyCard';
-import { mockProperties } from '@/data/properties';
+import { useProperties } from '@/services/api';
 import { SearchFilters as SearchFiltersType } from '@/types/property';
 import { Button } from '@/components/ui/button';
+import { PropertyListSkeleton } from '@/components/ui/loading-skeleton';
+import { ErrorMessage } from '@/components/ui/error-message';
 import { LayoutGrid, List, Search } from 'lucide-react';
 
 export default function Properties() {
@@ -19,9 +21,13 @@ export default function Properties() {
   });
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Fetch properties using React Query
+  const { data: properties = [], isLoading, isError, error, refetch } = useProperties(filters);
 
+  // Client-side filtering (you may want to move this to the backend)
   const filteredProperties = useMemo(() => {
-    return mockProperties.filter((property) => {
+    return properties.filter((property) => {
       // Price filter
       if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
         return false;
@@ -68,12 +74,47 @@ export default function Properties() {
 
       return true;
     });
-  }, [filters]);
+  }, [properties, filters]);
 
   const handleSearch = () => {
-    // Search is already handled by the filtered properties memo
-    console.log('Search performed with filters:', filters);
+    // Refetch data with new filters
+    refetch();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-luxury mb-4">Property Listings</h1>
+            <SearchFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              onSearch={handleSearch}
+            />
+          </div>
+          <PropertyListSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-luxury mb-4">Property Listings</h1>
+          </div>
+          <ErrorMessage
+            title="Failed to load properties"
+            message={error?.message || "Unable to fetch property listings. Please try again."}
+            onRetry={() => refetch()}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-50">

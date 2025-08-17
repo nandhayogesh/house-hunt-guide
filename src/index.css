@@ -9,32 +9,60 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 214 84% 40%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 20% 97%;
+    --muted-foreground: 220 15% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 38 92% 60%;
+    --accent-foreground: 220 15% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 214 84% 40%;
+
+    /* Real Estate Design System */
+    --luxury: 240 5% 15%;
+    --luxury-foreground: 0 0% 98%;
+    
+    --premium: 214 84% 40%;
+    --premium-light: 214 84% 50%;
+    --premium-dark: 214 84% 30%;
+    
+    --gold: 38 92% 60%;
+    --gold-light: 38 92% 70%;
+    
+    --neutral-50: 220 13% 97%;
+    --neutral-100: 220 13% 94%;
+    --neutral-200: 220 13% 91%;
+    --neutral-300: 220 13% 85%;
+    --neutral-600: 220 15% 55%;
+    --neutral-900: 220 15% 15%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--luxury)) 0%, hsl(var(--premium-dark)) 100%);
+    --gradient-premium: linear-gradient(135deg, hsl(var(--premium)) 0%, hsl(var(--premium-light)) 100%);
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsla(var(--luxury), 0.7) 100%);
+
+    /* Shadows */
+    --shadow-luxury: 0 20px 40px -10px hsla(var(--luxury), 0.3);
+    --shadow-premium: 0 10px 30px -5px hsla(var(--premium), 0.2);
+    --shadow-card: 0 4px 20px -2px hsla(var(--neutral-900), 0.1);
 
     --radius: 0.5rem;
 
